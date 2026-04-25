@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marianas Pro Manila 2026 · Kamphuis Fabricio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #12151b;
+    --surface2: #1a1e27;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #f0f2f7;
+    --muted: #6b7280;
+    --accent: #e8ff47;
+    --accent-dim: rgba(232,255,71,0.12);
+    --blue: #4fa3ff;
+    --blue-dim: rgba(79,163,255,0.12);
+    --red: #ff6b6b;
+    --red-dim: rgba(255,107,107,0.12);
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.1);
+    --orange: #fb923c;
+    --orange-dim: rgba(251,146,60,0.12);
+    --purple: #c084fc;
+    --purple-dim: rgba(192,132,252,0.12);
+    --ready-color: #e8ff47;
+    --ready-bg: rgba(232,255,71,0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(232,255,71,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 10% 80%, rgba(79,163,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 16px 60px; }
+
+  /* Header */
+  header { padding: 32px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .header-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .event-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 0.9;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .event-name span { color: var(--accent); }
+  .event-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+  .team-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .team-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* Next match card */
+  .next-wrap { margin-bottom: 20px; }
+  .next-card {
+    background: linear-gradient(135deg, #1a2010 0%, #141a0d 100%);
+    border: 1px solid rgba(232,255,71,0.2);
+    border-radius: 16px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .next-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(232,255,71,0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .next-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .next-name { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .next-sub { font-size: 12px; color: rgba(232,255,71,0.5); margin-bottom: 14px; }
+  .countdown-row { display: flex; gap: 8px; }
+  .cd-unit {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(232,255,71,0.15);
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-align: center;
+    min-width: 54px;
+  }
+  .cd-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); line-height: 1; }
+  .cd-label { font-size: 9px; color: rgba(232,255,71,0.4); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; }
+  .all-done { font-size: 16px; font-weight: 500; color: var(--accent); padding: 4px 0; }
+
+  /* Ready time alert */
+  .ready-banner {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: var(--ready-bg);
+    border: 1px solid rgba(232,255,71,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ready-color);
+  }
+  .ready-banner.show { display: flex; }
+  .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+  /* Filters */
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .pill {
+    font-size: 12px; font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pill:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  .pill.active { background: var(--accent); color: #0a0c10; border-color: var(--accent); font-weight: 600; }
+
+  /* Match cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s, opacity 0.3s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card.is-next { border-color: rgba(232,255,71,0.35); background: #13160e; }
+  .card.is-past { opacity: 0.4; }
+
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .fighter-row { display: flex; align-items: center; gap: 8px; }
+  .belt-pip {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+  }
+  .fighter-name { font-size: 17px; font-weight: 600; color: var(--text); }
+  .next-badge {
+    font-size: 9px; font-weight: 600;
+    background: var(--accent); color: #0a0c10;
+    padding: 2px 7px; border-radius: 999px;
+    letter-spacing: 0.05em;
+  }
+
+  .time-col { text-align: right; }
+  .start-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--blue);
+    line-height: 1;
+  }
+  .start-time.past { color: var(--muted); }
+  .match-cd { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .match-cd.soon { color: var(--accent); }
+
+  /* Ready time highlight */
+  .ready-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ready-bg);
+    border: 1px solid rgba(232,255,71,0.2);
+    border-radius: 7px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ready-color);
+  }
+  .ready-icon { font-size: 11px; }
+
+  .tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tag {
+    font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .tag-gi { background: var(--green-dim); color: var(--green); }
+  .tag-nogi { background: var(--orange-dim); color: var(--orange); }
+  .tag-final { background: var(--red-dim); color: var(--red); }
+  .tag-semi { background: var(--purple-dim); color: var(--purple); }
+  .tag-quarter { background: var(--blue-dim); color: var(--blue); }
+  .tag-cond { background: rgba(255,255,255,0.05); color: var(--muted); }
+
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin-bottom: 10px; }
+  .meta-item { font-size: 11px; color: var(--muted); }
+  .meta-item strong { color: rgba(240,242,247,0.85); font-weight: 500; }
+
+  .divider { height: 1px; background: var(--border); margin-bottom: 10px; }
+
+  /* VS section */
+  .vs-row { font-size: 12px; color: var(--muted); }
+  .vs-row strong { color: var(--text); font-weight: 500; }
+
+  /* Opponent picker */
+  .opp-picker { }
+  .opp-label { font-size: 11px; color: var(--muted); margin-bottom: 7px; letter-spacing: 0.03em; }
+  .opp-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .opp-btn {
+    flex: 1; min-width: 120px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .opp-btn:hover { border-color: rgba(255,255,255,0.2); }
+  .opp-btn.selected { background: var(--blue-dim); border-color: rgba(79,163,255,0.4); }
+  .opp-btn-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .opp-btn.selected .opp-btn-name { color: var(--blue); }
+  .opp-btn-team { font-size: 10px; color: var(--muted); }
+  .opp-result { margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .opp-result strong { color: var(--text); }
+
+  .empty { text-align: center; padding: 40px 16px; color: var(--muted); font-size: 14px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="header-top">
+      <div class="event-name">MARIANAS<br><span>PRO</span> MANILA<br><span style="font-size:32px;letter-spacing:2px;">2026</span></div>
+      <div class="event-date">
+        APR 26, 2026<br>
+        MANILA, PH
+      </div>
+    </div>
+    <div class="team-badge">Kamphuis Fabricio</div>
+  </header>
+
+  <!-- Next match countdown -->
+  <div class="next-wrap">
+    <div class="next-card">
+      <div class="next-eyebrow">▶ Next match</div>
+      <div class="next-name" id="nc-name">—</div>
+      <div class="next-sub" id="nc-sub">—</div>
+      <div class="countdown-row" id="nc-countdown">
+        <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-label">hrs</div></div>
+        <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-label">min</div></div>
+        <div class="cd-unit"><div class="cd-num" id="cd-s">--</div><div class="cd-label">sec</div></div>
+      </div>
+      <div class="ready-banner" id="ready-banner">
+        <div class="pulse"></div>
+        <span id="ready-text">Head to the mat now!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters" id="filters"></div>
+
+  <!-- Cards -->
+  <div id="cards"></div>
+
+</div>
+
+<script>
+const DATE = '2026-04-26';
+
+const BELT_COLORS = {
+  White: '#d1d5db',
+  Yellow: '#facc15',
+  Orange: '#fb923c',
+  Green: '#4ade80',
+  Blue: '#60a5fa',
+  Purple: '#c084fc',
+  Brown: '#a16207',
+  Black: '#374151'
+};
+
+const matches = [
+  { id:0, fighter:'Mikel', type:'No-Gi', div:'Kid 5', belt:'White', weight:'Middle', maxW:'55.3', stage:'Final', fight:'8', mat:'5', start:'9:30', ready:'8:50', duration:'4 mins', opponents:['-'], teams:['-'], cond:false },
+  { id:1, fighter:'Inigo', type:'No-Gi', div:'Kid 6', belt:'White', weight:'Light Feather', maxW:'49.9', stage:'Final', fight:'16', mat:'3', start:'10:40', ready:'10:00', duration:'4 mins', opponents:['Ebayan Lucas'], teams:['Clube De Jiujitsu'], cond:false },
+  { id:2, fighter:'Odinn', type:'Gi', div:'Kid 2', belt:'White', weight:'Light', maxW:'31.8', stage:'Final', fight:'36', mat:'2', start:'12:44', ready:'12:04', duration:'2 mins', opponents:['Sumile Zion'], teams:['Deftac Six Blades'], cond:false },
+  { id:3, fighter:'Bella', type:'Gi', div:'Kid 3', belt:'White', weight:'Feather', maxW:'31.8', stage:'Semifinal', fight:'40', mat:'2', start:'12:57', ready:'12:17', duration:'3 mins', opponents:['Custodio Mary'], teams:['Kamphuis Fabricio'], cond:false },
+  { id:4, fighter:'Bella', type:'Gi', div:'Kid 3', belt:'White', weight:'Feather', maxW:'31.8', stage:'Semifinal', fight:'43', mat:'2', start:'13:08', ready:'12:28', duration:'3 mins', opponents:['Leyte Sabrielle','Simbol Kendall'], teams:['Kamphuis Fabricio','Deftac Six Blades'], cond:'If win #40' },
+  { id:5, fighter:'Mikel', type:'Gi', div:'Kid 5', belt:'White', weight:'Middle', maxW:'56.7', stage:'Semifinal', fight:'65', mat:'4', start:'14:56', ready:'14:16', duration:'4 mins', opponents:['Eugerio Mikhail'], teams:['Deftac Six Blades'], cond:false },
+  { id:6, fighter:'Mikel', type:'Gi', div:'Kid 5', belt:'White', weight:'Middle', maxW:'56.7', stage:'Final', fight:'73', mat:'4', start:'15:33', ready:'14:53', duration:'4 mins', opponents:['Reyes Fhilkevin'], teams:['Carpe Diem'], cond:'If win #65' },
+  { id:7, fighter:'Zion', type:'Gi', div:'Kid 6', belt:'Green', weight:'Light Feather', maxW:'51.3', stage:'Quarterfinal', fight:'74', mat:'1', start:'15:39', ready:'14:59', duration:'4 mins', opponents:['Matta Matteo'], teams:['Emerge Jiujitsu'], cond:false },
+  { id:8, fighter:'Zion', type:'Gi', div:'Kid 7', belt:'Green', weight:'Light Feather', maxW:'51.3', stage:'Semifinal', fight:'77', mat:'1', start:'15:54', ready:'15:14', duration:'4 mins', opponents:['De Guzman Ethan'], teams:['Kamphuis Fabricio'], cond:'If win #74' },
+  { id:9, fighter:'Martina', type:'Gi', div:'Kid 6', belt:'Yellow', weight:'Light Feather', maxW:'51.3', stage:'Final', fight:'79', mat:'1', start:'16:04', ready:'15:24', duration:'4 mins', opponents:['Dumacian Tinker Bell'], teams:['Deftac Six Blades'], cond:false },
+  { id:10, fighter:'Zion', type:'Gi', div:'Kid 8', belt:'Green', weight:'Light Feather', maxW:'51.3', stage:'Final', fight:'80', mat:'1', start:'16:09', ready:'15:29', duration:'4 mins', opponents:['Siu Blake','Chang Eavan'], teams:['Kamphuis Fabricio','Carpe Diem'], cond:'If win #77' },
+  { id:11, fighter:'Inigo', type:'Gi', div:'Kid 6', belt:'White', weight:'Light Feather', maxW:'51.3', stage:'Semifinal', fight:'81', mat:'3', start:'16:12', ready:'15:32', duration:'4 mins', opponents:['Ebayan Lucas'], teams:['Clube De Jiujitsu'], cond:false },
+  { id:12, fighter:'Inigo', type:'Gi', div:'Kid 6', belt:'White', weight:'Light Feather', maxW:'51.3', stage:'Final', fight:'85', mat:'3', start:'16:32', ready:'15:52', duration:'4 mins', opponents:['Montenegro Diego','Decena Joaquin'], teams:['Deftac Six Blades','Alliance Jiujitsu'], cond:'If win #81' },
+];
+
+const selectedOpponents = {};
+let currentFilter = 'all';
+
+function matchTime(m, useReady) {
+  const t = useReady ? m.ready : m.start;
+  const [h, min] = t.split(':').map(Number);
+  return new Date(`${DATE}T${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}:00`);
+}
+
+function getNextIdx() {
+  const now = new Date();
+  for (let i = 0; i < matches.length; i++) {
+    if (matchTime(matches[i]) > now) return i;
+  }
+  return -1;
+}
+
+function fmtCd(ms) {
+  if (ms <= 0) return null;
+  const t = Math.floor(ms / 1000);
+  return { h: Math.floor(t/3600), m: Math.floor((t%3600)/60), s: t%60 };
+}
+
+function stageClass(s) {
+  if (s === 'Quarterfinal') return 'tag-quarter';
+  if (s.includes('Semifinal')) return 'tag-semi';
+  if (s.includes('Final')) return 'tag-final';
+  return 'tag-cond';
+}
+
+function buildFilters() {
+  const fighters = [...new Set(matches.map(m => m.fighter))];
+  const wrap = document.getElementById('filters');
+  wrap.innerHTML = `<button class="pill active" onclick="setFilter('all',this)">All</button>`
+    + fighters.map(f => `<button class="pill" onclick="setFilter('${f}',this)">${f}</button>`).join('')
+    + `<button class="pill" onclick="setFilter('Gi',this)">Gi</button>`
+    + `<button class="pill" onclick="setFilter('No-Gi',this)">No-Gi</button>`;
+}
+
+function setFilter(key, el) {
+  currentFilter = key;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function selectOpponent(matchId, idx) {
+  selectedOpponents[matchId] = idx;
+  render();
+}
+
+function updateNextCard() {
+  const idx = getNextIdx();
+  const now = new Date();
+
+  if (idx === -1) {
+    document.getElementById('nc-name').textContent = 'All matches complete!';
+    document.getElementById('nc-sub').textContent = 'Great job team! 🏅';
+    document.getElementById('nc-countdown').innerHTML = '<div class="all-done">Done for the day!</div>';
+    return;
+  }
+
+  const m = matches[idx];
+  const diff = matchTime(m) - now;
+  const readyDiff = matchTime(m, true) - now;
+  const cd = fmtCd(diff);
+
+  document.getElementById('nc-name').textContent = `${m.fighter} — ${m.stage}`;
+  document.getElementById('nc-sub').textContent = `${m.type} · ${m.div} · Mat ${m.mat} · Fight #${m.fight}`;
+
+  if (cd) {
+    document.getElementById('cd-h').textContent = String(cd.h).padStart(2,'0');
+    document.getElementById('cd-m').textContent = String(cd.m).padStart(2,'0');
+    document.getElementById('cd-s').textContent = String(cd.s).padStart(2,'0');
+  }
+
+  const banner = document.getElementById('ready-banner');
+  if (readyDiff <= 0 && diff > 0) {
+    banner.classList.add('show');
+    document.getElementById('ready-text').textContent = `${m.fighter} — head to Mat ${m.mat} now!`;
+  } else if (readyDiff > 0 && readyDiff <= 15 * 60 * 1000) {
+    banner.classList.add('show');
+    const rcd = fmtCd(readyDiff);
+    document.getElementById('ready-text').textContent = `Ready time in ${rcd.m}m ${rcd.s}s — Mat ${m.mat}`;
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+function render() {
+  const now = new Date();
+  const nextIdx = getNextIdx();
+  const list = currentFilter === 'all' ? matches
+    : matches.filter(m => m.fighter === currentFilter || m.type === currentFilter);
+
+  if (!list.length) {
+    document.getElementById('cards').innerHTML = '<div class="empty">No matches found</div>';
+    return;
+  }
+
+  document.getElementById('cards').innerHTML = list.map(m => {
+    const mt = matchTime(m);
+    const isPast = mt < now;
+    const isNext = matches.indexOf(m) === nextIdx;
+    const diff = mt - now;
+    const cd = fmtCd(diff);
+    const hasChoice = m.opponents.length > 1;
+    const selIdx = selectedOpponents[m.id] !== undefined ? selectedOpponents[m.id] : -1;
+    const beltColor = BELT_COLORS[m.belt] || '#ccc';
+
+    let cdText = '';
+    if (isPast) cdText = `<div class="match-cd">Completed</div>`;
+    else if (cd) {
+      const soon = cd.h === 0 && cd.m < 30;
+      cdText = `<div class="match-cd ${soon?'soon':''}">${cd.h > 0 ? cd.h+'h ' : ''}${cd.m}m away</div>`;
+    }
+
+    let vsSection = '';
+    if (m.opponents[0] === '-') {
+      vsSection = `<div class="vs-row">No opponent listed yet</div>`;
+    } else if (hasChoice) {
+      const btns = m.opponents.map((opp, i) =>
+        `<button class="opp-btn ${selIdx===i?'selected':''}" onclick="selectOpponent(${m.id},${i})">
+          <div class="opp-btn-name">${opp}</div>
+          <div class="opp-btn-team">${m.teams[i]}</div>
+        </button>`
+      ).join('');
+      const result = selIdx >= 0
+        ? `<div class="opp-result">vs <strong>${m.opponents[selIdx]}</strong> · ${m.teams[selIdx]}</div>`
+        : `<div class="opp-result" style="color:var(--muted);font-style:italic">Select opponent above</div>`;
+      vsSection = `<div class="opp-picker">
+        <div class="opp-label">Choose final opponent ↓</div>
+        <div class="opp-btns">${btns}</div>
+        ${result}
+      </div>`;
+    } else {
+      vsSection = `<div class="vs-row">vs <strong>${m.opponents[0]}</strong> · ${m.teams[0]}</div>`;
+    }
+
+    return `
+    <div class="card ${isNext?'is-next':''} ${isPast?'is-past':''}">
+      <div class="card-header">
+        <div>
+          <div class="fighter-row">
+            <div class="belt-pip" style="background:${beltColor}"></div>
+            <div class="fighter-name">${m.fighter}</div>
+            ${isNext ? '<span class="next-badge">NEXT</span>' : ''}
+          </div>
+        </div>
+        <div class="time-col">
+          <div class="start-time ${isPast?'past':''}">${m.start}</div>
+          ${cdText}
+        </div>
+      </div>
+
+      <div class="ready-row">
+        <span class="ready-icon">⏰</span>
+        <span>Ready at <strong>${m.ready}</strong> · Mat ${m.mat}</span>
+      </div>
+
+      <div class="tags">
+        <span class="tag ${m.type==='Gi'?'tag-gi':'tag-nogi'}">${m.type}</span>
+        <span class="tag ${stageClass(m.stage)}">${m.stage}</span>
+        ${m.cond ? `<span class="tag tag-cond">${m.cond}</span>` : ''}
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-item">Div <strong>${m.div}</strong></div>
+        <div class="meta-item">Weight <strong>${m.weight}</strong></div>
+        <div class="meta-item">Fight <strong>#${m.fight}</strong></div>
+        <div class="meta-item">Duration <strong>${m.duration}</strong></div>
+        <div class="meta-item">Max <strong>${m.maxW} kg</strong></div>
+        <div class="meta-item">Belt <strong>${m.belt}</strong></div>
+      </div>
+
+      <div class="divider"></div>
+      ${vsSection}
+    </div>`;
+  }).join('');
+}
+
+buildFilters();
+updateNextCard();
+render();
+setInterval(() => { updateNextCard(); render(); }, 1000);
+</script>
+</body>
+</html>
